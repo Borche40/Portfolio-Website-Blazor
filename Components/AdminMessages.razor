@@ -1,0 +1,87 @@
+﻿@page "/admin-messages"
+@rendermode InteractiveServer
+@using BorchePortfolio.Models
+@using BorchePortfolio.Services
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@inject ContactService ContactService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Admin Nachrichten</PageTitle>
+<div class="admin-dark-page">
+<h3>Nachrichten Verwaltung</h3>
+
+    @if (messages == null)
+    {
+        <div class="admin-card">
+            <p>⏳ Nachrichten werden geladen...</p>
+        </div>
+    }
+    else if (messages.Count == 0)
+    {
+        <div class="admin-card">
+            <p>📭 Keine Nachrichten vorhanden.</p>
+        </div>
+    }
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Nachricht</th>
+                <th>Datum</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in messages)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.Message</td>
+                    <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMessage(item.Id)">
+                            Löschen
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</div>
+@code {
+
+    private List<ContactMessage>? messages;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadMessages();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadMessages()
+    {
+        var loggedIn = await JS.InvokeAsync<string>("sessionStorage.getItem", "admin");
+        if (loggedIn != "true")
+        {
+            Navigation.NavigateTo("/admin-login");
+            return;
+        }
+        messages = await ContactService.GetAllAsync();
+    }
+
+    private async Task DeleteMessage(int id)
+    {
+        await ContactService.DeleteAsync(id);
+        await LoadMessages();
+    }
+
+}

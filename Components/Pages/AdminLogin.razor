@@ -1,0 +1,42 @@
+﻿@page "/admin-login"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Admin Login</PageTitle>
+
+<div class="admin-login-page">
+    <div class="admin-login-card">
+        <h1>Admin Login</h1>
+        <p>Bitte Passwort eingeben, um den Nachrichtenbereich zu öffnen.</p>
+
+        <input type="password" class="form-control admin-login-input" @bind="password" placeholder="Passwort" />
+
+        <button class="btn btn-primary admin-login-btn" @onclick="Login">
+            Einloggen
+        </button>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p class="admin-login-error">@errorMessage</p>
+        }
+    </div>
+</div>
+
+@code {
+    private string password = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task Login()
+    {
+        if (password == "12345")
+        {
+            await JS.InvokeVoidAsync("sessionStorage.setItem", "admin", "true");
+            Navigation.NavigateTo("/admin-messages");
+        }
+        else
+        {
+            errorMessage = "Falsches Passwort.";
+        }
+    }
+}

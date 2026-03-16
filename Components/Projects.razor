@@ -1,0 +1,117 @@
+﻿@page "/projects"
+@rendermode InteractiveServer
+
+<PageTitle>Projekte</PageTitle>
+
+<section class="projects-page">
+    <div class="projects-header">
+        <span class="section-badge">Portfolio</span>
+        <h1>Meine Projekte</h1>
+        <p>
+            Ausgewählte Softwareprojekte mit Fokus auf Architektur,
+            Benutzeroberfläche, Datenbankanbindung und praxisnahe Lösungen.
+        </p>
+    </div>
+
+    <div class="projects-list">
+        <div class="project-item">
+            <div class="project-gallery">
+                <img src="Image/1000045108.png" alt="ERP Dashboard" @onclick="() => OpenImage(0)" />
+                <img src="Image/1000045104.png" alt="ERP Aufgabenübersicht" @onclick="() => OpenImage(1)" />
+                <img src="Image/1000045107.png" alt="ERP Kundenverwaltung" @onclick="() => OpenImage(2)" />
+                <img src="Image/Produktübersicht.png" alt="ERP Produktübersicht" @onclick="() => OpenImage(3)" />
+                <img src="Image/Benutzeranmeldung.png" alt="ERP Benutzeranmeldung" @onclick="() => OpenImage(4)" />
+            </div>
+
+            <div class="project-content">
+                <span class="project-type">ERP SYSTEM</span>
+                <h2>ERP UI System</h2>
+                <p>
+                    Entwicklung eines strukturierten ERP-Systems mit C#, WPF, XAML,
+                    MVVM, SQL Server und API-Anbindung. Fokus auf klare Prozesse,
+                    saubere Architektur und benutzerfreundliche Oberflächen für
+                    Kunden, Produkte, Aufgaben, Bestellungen und Zahlungen.
+                </p>
+
+                <div class="project-tags">
+                    <span>C#</span>
+                    <span>WPF</span>
+                    <span>XAML</span>
+                    <span>MVVM</span>
+                    <span>SQL Server</span>
+                    <span>REST API</span>
+                    <span>PDF Export</span>
+                    <span>Excel Export</span>
+                </div>
+
+                <div class="project-features">
+                    <div class="feature-box">Dashboard mit Kennzahlen und Diagrammen</div>
+                    <div class="feature-box">Kunden- und Produktverwaltung</div>
+                    <div class="feature-box">Aufgabenmanagement mit Statuslogik</div>
+                    <div class="feature-box">Bestellungen, Zahlungen und Exportfunktionen</div>
+                </div>
+
+                <div class="project-links">
+                    <a href="https://github.com/Borche40/ERP_UI" target="_blank">GitHub ansehen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (selectedImageIndex >= 0)
+{
+    <div class="project-lightbox" @onclick="CloseImage">
+        <div class="project-lightbox-content" @onclick:stopPropagation="true">
+            <button class="project-close" @onclick="CloseImage">✕</button>
+
+            <button class="project-arrow left" @onclick="PreviousImage">❮</button>
+
+            <img src="@images[selectedImageIndex]" class="project-lightbox-image" />
+
+            <button class="project-arrow right" @onclick="NextImage">❯</button>
+        </div>
+    </div>
+}
+
+@code {
+
+    private int selectedImageIndex = -1;
+
+    private List<string> images = new()
+    {
+        "Image/1000045108.png",
+        "Image/1000045104.png",
+        "Image/1000045107.png",
+        "Image/Produktübersicht.png",
+        "Image/Benutzeranmeldung.png"
+    };
+
+    void OpenImage(int index)
+    {
+        Console.WriteLine($"Clicked image{index}");
+        selectedImageIndex = index;
+    }
+
+    void CloseImage()
+    {
+        selectedImageIndex = -1;
+    }
+
+    void NextImage()
+    {
+        selectedImageIndex++;
+
+        if (selectedImageIndex >= images.Count)
+            selectedImageIndex = 0;
+    }
+
+    void PreviousImage()
+    {
+        selectedImageIndex--;
+
+        if (selectedImageIndex < 0)
+            selectedImageIndex = images.Count - 1;
+    }
+
+}

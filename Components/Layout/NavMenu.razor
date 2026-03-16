@@ -1,0 +1,108 @@
+﻿@using BorchePortfolio.Services
+@inject ContactService ContactService
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<div class="mobile-nav-wrapper">
+    <input id="mobile-nav-toggle" type="checkbox" class="navbar-toggler" title="Navigation menu" />
+
+    <div class="top-row ps-3 navbar navbar-dark">
+        <div class="container-fluid nav-header">
+            <a class="navbar-brand" href="">BorchePortfolio</a>
+            <label for="mobile-nav-toggle" class="hamburger-icon"></label>
+        </div>
+    </div>
+
+    <div class="nav-scrollable" onclick="document.getElementById('mobile-nav-toggle').checked = false">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house"></span>
+                Startseite
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="projects">
+                <span class="bi bi-folder"></span>
+                Projekte
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="contact">
+                <span class="bi bi-envelope"></span>
+                Kontakt
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link" href="https://github.com/Borche40/ERP.UI" target="_blank">
+                <span class="bi bi-github"></span>
+                GitHub
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link" href="https://www.linkedin.com/in/borche-mladenovski-514aa73a5" target="_blank">
+                <span class="bi bi-linkedin"></span>
+                LinkedIn
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link" href="mailto:borchemladenovski21@gmail.com">
+                <span class="bi bi-envelope-fill"></span>
+                Email
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="admin-messages">
+                <span class="bi bi-chat-dots"></span>
+                <span>Nachrichten</span>
+                @if (messageCount > 0)
+                {
+                    <span class="badge bg-danger">@messageCount</span>
+                }
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link logout-link" href="admin-login">
+                <span class="bi bi-box-arrow-right"></span>
+                Logout
+            </a>
+        </div>
+
+        <div class="footer">
+            © Borche Mladenovski
+        </div>
+    </div>
+</div>
+
+@code {
+    private int messageCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+        await LoadMessageCount();
+    }
+
+    private async void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        await LoadMessageCount();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadMessageCount()
+    {
+        var messages = await ContactService.GetAllAsync();
+        messageCount = messages.Count;
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

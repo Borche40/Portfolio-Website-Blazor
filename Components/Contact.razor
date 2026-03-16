@@ -1,0 +1,50 @@
+﻿
+@page "/contact"
+@rendermode InteractiveServer
+@using BorchePortfolio.Models
+@using BorchePortfolio.Services
+@inject ContactService ContactService
+
+<h3>Kontakt</h3>
+
+<EditForm Model="message" OnValidSubmit="HandleSubmit" FormName="ContactForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name</label>
+        <InputText class="form-control" @bind-Value="message.Name" />
+        <ValidationMessage For="@(()=> message.Name)"/>
+    </div>
+
+    <div class="mb-3">
+        <label>Email</label>
+        <InputText class="form-control" @bind-Value="message.Email" />
+        <ValidationMessage For="@(() => message.Email)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Nachricht</label>
+        <InputTextArea class="form-control" @bind-Value="message.Message" />
+        <ValidationMessage For="@(() => message.Message)" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Senden</button>
+</EditForm>
+
+@if (success)
+{
+    <p style="color:green">Nachricht wurde erfolgreich gesendet!</p>
+}
+
+@code {
+    private ContactMessage message = new();
+    private bool success = false;
+
+    private async Task HandleSubmit()
+    {
+        await ContactService.SaveAsync(message);
+        success = true;
+        message = new ContactMessage();
+    }
+}
